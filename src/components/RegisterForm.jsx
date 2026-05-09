@@ -28,7 +28,7 @@ function RegisterForm() {
 
       console.log(response.data);
 
-      alert("Register Success");
+      alert("Account Created sucessfully");
 
       // ✅ LOGIN PAGE KI VELTADI
       navigate("/login");
