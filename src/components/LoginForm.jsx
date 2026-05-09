@@ -53,7 +53,8 @@ function LoginForm() {
 
       } else {
 
-        navigate("/registrations");
+        // USER ALSO GOES TO EVENTS PAGE
+        navigate("/events");
       }
 
     } catch (error) {

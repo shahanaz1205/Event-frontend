@@ -28,7 +28,7 @@ function Header() {
         className="nav-links"
         style={{
           display: "flex",
-          gap: "20px", // ADD THIS
+          gap: "20px",
           alignItems: "center"
         }}
       >
@@ -42,13 +42,6 @@ function Header() {
         {role === "admin" && (
           <Link to="/create-event">
             Create Event
-          </Link>
-        )}
-
-        {/* USER ONLY */}
-        {role === "user" && (
-          <Link to="/register-event">
-            Register Event
           </Link>
         )}
 
