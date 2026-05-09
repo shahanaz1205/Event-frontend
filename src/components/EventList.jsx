@@ -5,6 +5,10 @@ import API from "../api/client";
 function EventList() {
 
   const [events, setEvents] = useState([]);
+
+  // NEW
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+
   const navigate = useNavigate();
 
   // ADD THIS
@@ -19,8 +23,37 @@ function EventList() {
     }
   };
 
+  // NEW
+  const getRegistrations = async () => {
+
+    try {
+
+      const response = await API.get("/registrations/");
+
+      const userRegistrations = response.data.filter(
+        (item) => item.user_id === user?.id
+      );
+
+      const ids = userRegistrations.map(
+        (item) => item.event_id
+      );
+
+      setRegisteredEvents(ids);
+
+    } catch (error) {
+
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+
     getEvents();
+
+    if (user?.role === "user") {
+      getRegistrations();
+    }
+
   }, []);
 
   const handleDelete = async (id) => {
@@ -38,6 +71,27 @@ function EventList() {
 
   const handleEdit = (id) => {
     navigate(`/edit-event/${id}`);
+  };
+
+  // NEW
+  const handleRegister = async (eventId) => {
+
+    try {
+
+      await API.post("/registrations/", {
+        event_id: eventId,
+      });
+
+      alert("Event Registered Successfully");
+
+      getRegistrations();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Registration Failed");
+    }
   };
 
   return (
@@ -61,7 +115,12 @@ function EventList() {
             <th>Date</th>
             <th>Max Participants</th>
 
-            {/* UPDATED */}
+            {/* USER REGISTER BUTTON */}
+            {user?.role === "user" && (
+              <th>Register</th>
+            )}
+
+            {/* ADMIN */}
             {user?.role === "admin" && (
               <th>Actions</th>
             )}
@@ -78,7 +137,34 @@ function EventList() {
               <td>{event.event_date}</td>
               <td>{event.max_participants}</td>
 
-              {/* UPDATED */}
+              {/* USER REGISTER BUTTON */}
+              {user?.role === "user" && (
+
+                <td>
+
+                  <button
+                    disabled={registeredEvents.includes(event.id)}
+                    onClick={() => handleRegister(event.id)}
+                    style={{
+                      opacity: registeredEvents.includes(event.id)
+                        ? 0.5
+                        : 1,
+                      cursor: registeredEvents.includes(event.id)
+                        ? "not-allowed"
+                        : "pointer",
+                    }}
+                  >
+
+                    {registeredEvents.includes(event.id)
+                      ? "Registered"
+                      : "Register"}
+
+                  </button>
+
+                </td>
+              )}
+
+              {/* ADMIN ACTIONS */}
               {user?.role === "admin" && (
                 <td>
                   <button
